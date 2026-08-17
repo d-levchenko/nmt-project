@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { deleteQuiz } from '@/lib/quizApi';
-import type { Question, Quiz } from '@/types/quiz';
+import type { Question, Quiz } from '@/types';
 
 import css from './QuizDetails.module.css';
 

@@ -6,7 +6,7 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik';
 import { quizValidationSchema } from '@/validation/quizValidationSchema';
 import { createQuiz } from '@/lib/quizApi';
 import { ApiError } from '@/lib/apiClient';
-import type { QuestionType } from '@/types/quiz';
+import type { QuestionType } from '@/types';
 import QuestionFields from './QuestionFields';
 import {
   createEmptyQuestion,

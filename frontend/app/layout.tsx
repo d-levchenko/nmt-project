@@ -45,7 +45,7 @@ export default function RootLayout({
       <body>
         <TanStackProvider>
           <Header />
-          {children}
+          <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
         </TanStackProvider>
       </body>
     </html>

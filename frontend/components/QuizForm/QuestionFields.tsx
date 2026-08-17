@@ -1,7 +1,7 @@
 'use client';
 
 import { ErrorMessage, Field, FieldArray, useFormikContext } from 'formik';
-import type { QuestionType } from '@/types/quiz';
+import type { QuestionType } from '@/types';
 import {
   createEmptyQuestion,
   QuestionFormValues,

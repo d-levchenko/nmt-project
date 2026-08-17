@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Quiz Builder',
@@ -16,30 +15,28 @@ export const metadata: Metadata = {
 
 const HomePage = () => {
   return (
-    <main className={styles.hero}>
-      <section className={styles.content}>
-        <span className={styles.badge}>Quiz Builder</span>
-
-        <h1 className={styles.title}>Create and manage quizzes with ease</h1>
-
-        <p className={styles.description}>
-          Build quizzes with multiple question types, browse all created
-          quizzes, and view each quiz in a clean, read-only layout.
-        </p>
-
-        <div className={styles.actions}>
-          <Link href="/create" className={`${styles.button} ${styles.primary}`}>
-            + Create quiz
-          </Link>
-
-          <Link
-            href="/quizzes"
-            className={`${styles.button} ${styles.secondary}`}>
-            Browse quizzes
-          </Link>
-        </div>
-      </section>
-    </main>
+    <section className="py-20 text-center">
+      <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+        Quiz training platform
+      </p>
+      <h1 className="text-4xl font-bold sm:text-6xl">
+        Practice. Measure. Improve.
+      </h1>
+      <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
+        Choose a quiz, train with as many questions as you want, and compare
+        your score and speed with other learners.
+      </p>
+      <div className="mt-8 flex justify-center gap-3">
+        <Link
+          href="/quizzes"
+          className="rounded-lg bg-black px-5 py-3 text-white">
+          Browse quizzes
+        </Link>
+        <Link href="/register" className="rounded-lg border bg-white px-5 py-3">
+          Create account
+        </Link>
+      </div>
+    </section>
   );
 };
 

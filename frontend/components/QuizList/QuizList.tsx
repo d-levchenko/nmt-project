@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { deleteQuiz } from '@/lib/quizApi';
-import type { Quiz } from '@/types/quiz';
+import type { Quiz } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import css from './QuizList.module.css';
