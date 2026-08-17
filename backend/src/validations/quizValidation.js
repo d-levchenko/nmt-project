@@ -1,74 +1,59 @@
-import { Joi, Segments } from 'celebrate';
-import { isValidObjectId } from 'mongoose';
-import { QUESTION_TYPES } from '../constants/questionType.js';
+import { z } from 'zod';
+import objectIdValidator from './objectIdValidator.js';
 
-const questionSchema = Joi.object({
-  questionText: Joi.string().trim().min(5).required().messages({
-    'string.empty': '"questionText" is required',
-  }),
+const questionSchema = z
+  .object({
+    text: z.string().trim().min(1).max(1000),
+    answers: z.array(z.string().trim().min(1).max(500)).min(2).max(8),
+    correctAnswerIndex: z.number().int().min(0),
+  })
+  .superRefine((question, ctx) => {
+    if (question.correctAnswerIndex >= question.answers.length) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['correctAnswerIndex'],
+        message: 'Invalid correct answer index.',
+      });
+    }
+  });
 
-  type: Joi.string()
-    .valid(...QUESTION_TYPES)
-    .required(),
-
-  options: Joi.when('type', {
-    is: 'checkbox',
-    then: Joi.array()
-      .items(Joi.string().trim().min(1))
-      .min(2)
-      .required()
-      .messages({
-        'array.min': 'Checkbox questions require at least 2 options',
-      }),
-    otherwise: Joi.forbidden(),
-  }),
-
-  correctAnswer: Joi.when('type', {
-    switch: [
-      { is: 'boolean', then: Joi.boolean().required() },
-      { is: 'input', then: Joi.string().trim().min(1).required() },
-      {
-        is: 'checkbox',
-        then: Joi.array()
-          .items(Joi.string())
-          .min(1)
-          .required()
-          .custom((value, helpers) => {
-            const { options = [] } = helpers.state.ancestors[0];
-            const isSubset = value.every(answer => options.includes(answer));
-            return isSubset
-              ? value
-              : helpers.message(
-                  '"correctAnswer" must only contain values from "options"',
-                );
-          }),
-      },
-    ],
+export const createQuizSchema = z.object({
+  body: z.object({
+    title: z.string().trim().min(1).max(150),
+    description: z.string().trim().max(1000).default(''),
+    questions: z.array(questionSchema).min(1),
   }),
 });
 
-export const createQuizSchema = {
-  [Segments.BODY]: Joi.object({
-    title: Joi.string().trim().min(1).required(),
-    questions: Joi.array().items(questionSchema).min(1).required(),
+export const getAllQuizzesSchema = z.object({
+  query: z.object({
+    page: z.number().int().min(1).default(1),
+    perPage: z.number().int().min(1).max(100).default(10),
+    totalQuizzes: z.boolean().default(false),
+    totalPages: z.number().int().min(1).default(1),
+    quizzes: z.array(questionSchema).default([]),
   }),
-};
+});
 
-export const quizIdSchema = {
-  [Segments.PARAMS]: Joi.object({
-    quizId: Joi.string()
-      .custom((value, helpers) =>
-        !isValidObjectId(value)
-          ? helpers.message('"quizId" must be a valid ObjectId')
-          : value,
-      )
-      .required(),
+export const getQuizByIdSchema = z.object({
+  params: z.object({
+    quizId: objectIdValidator,
   }),
-};
+});
 
-export const getAllQuizzesSchema = {
-  [Segments.QUERY]: Joi.object({
-    page: Joi.number().integer().min(1).default(1),
-    perPage: Joi.number().integer().min(5).max(20).default(10),
+export const deleteQuizByIdSchema = z.object({
+  params: z.object({
+    quizId: objectIdValidator,
   }),
-};
+});
+
+export const updateQuizByIdSchema = z.object({
+  params: z.object({
+    quizId: objectIdValidator,
+  }),
+  body: z.object({
+    title: z.string().trim().min(1).max(150).optional(),
+    description: z.string().trim().max(1000).optional(),
+    questions: z.array(questionSchema).optional(),
+  }),
+});

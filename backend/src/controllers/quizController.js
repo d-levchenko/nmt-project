@@ -1,17 +1,45 @@
 import createHttpError from 'http-errors';
-import { QuizCollection } from '../models/quiz.js';
+import { Quiz } from '../models/quiz.js';
 
 export const createQuiz = async (req, res) => {
-  const quiz = await QuizCollection.create(req.body);
+  const { title, description, questions } = req.body;
 
-  res.status(201).json(quiz);
+  const normalizedQuestions = questions.map(question => {
+    const answers = question.answers.map(text => ({ text }));
+    return {
+      text: question.text,
+      answers,
+      correctAnswer: answers[question.correctAnswerIndex]._id,
+    };
+  });
+
+  const quiz = await Quiz.create({
+    title,
+    description,
+    questions: normalizedQuestions,
+    createdBy: req.user._id,
+  });
+
+  res.status(201).json({
+    quiz: {
+      id: quiz._id,
+      title: quiz.title,
+      description: quiz.description,
+      questionCount: quiz.questions.length,
+      createdAt: quiz.createdAt,
+      updatedAt: quiz.updatedAt,
+      createdBy: quiz.createdBy,
+    },
+  });
 };
 
 export const getAllQuizzes = async (req, res) => {
   const { page = 1, perPage = 10 } = req.query;
   const skip = (page - 1) * perPage;
 
-  const quizQuery = QuizCollection.find();
+  const quizQuery = await Quiz.find()
+    .sort({ createdAt: -1 })
+    .select('title description questions createdBy createdAt');
 
   const [totalItems, quizzes] = await Promise.all([
     quizQuery.clone().countDocuments(),
@@ -20,7 +48,7 @@ export const getAllQuizzes = async (req, res) => {
 
   const totalPages = Math.ceil(totalItems / perPage);
 
-  res.status(200).json({
+  res.json({
     page,
     perPage,
     totalQuizzes: totalItems,
@@ -31,18 +59,72 @@ export const getAllQuizzes = async (req, res) => {
 
 export const getQuizById = async (req, res) => {
   const { quizId } = req.params;
-  const quiz = await QuizCollection.findById(quizId);
+  const quiz = await Quiz.findById(quizId);
+
+  if (!quiz) throw createHttpError(404, 'Quiz not found');
+
+  res.json({
+    quiz: {
+      id: quiz._id,
+      title: quiz.title,
+      description: quiz.description,
+      questionCount: quiz.questions.length,
+      questions: quiz.questions.map(q => ({
+        id: q._id,
+        text: q.text,
+        answers: q.answers.map(a => ({ id: a._id, text: a.text })),
+      })),
+      createdAt: quiz.createdAt,
+    },
+  });
+};
+
+export const deleteQuizById = async (req, res) => {
+  const { quizId } = req.params;
+  const quiz = await Quiz.findByIdAndDelete(quizId);
 
   if (!quiz) throw createHttpError(404, 'Quiz not found');
 
   res.json(quiz);
 };
 
-export const deleteQuizById = async (req, res) => {
+export const updateQuizById = async (req, res) => {
   const { quizId } = req.params;
-  const quiz = await QuizCollection.findByIdAndDelete(quizId);
+  const { title, description, questions } = req.body;
+
+  const normalizedQuestions = questions.map(question => {
+    const answers = question.answers.map(text => ({ text }));
+    return {
+      text: question.text,
+      answers,
+      correctAnswer: answers[question.correctAnswerIndex]._id,
+    };
+  });
+
+  const quiz = await Quiz.findByIdAndUpdate(
+    quizId,
+    {
+      title,
+      description,
+      questions: normalizedQuestions,
+    },
+    { new: true },
+  );
 
   if (!quiz) throw createHttpError(404, 'Quiz not found');
 
-  res.json(quiz);
+  res.json({
+    quiz: {
+      id: quiz._id,
+      title: quiz.title,
+      description: quiz.description,
+      questionCount: quiz.questions.length,
+      questions: quiz.questions.map(q => ({
+        id: q._id,
+        text: q.text,
+        answers: q.answers.map(a => ({ id: a._id, text: a.text })),
+      })),
+      createdAt: quiz.createdAt,
+    },
+  });
 };

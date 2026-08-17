@@ -1,0 +1,42 @@
+import crypto from 'node:crypto';
+import { Session } from '../models/session';
+import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/time';
+
+export const createSession = userId => {
+  const accessToken = crypto.randomUUID();
+  const refreshToken = crypto.randomUUID();
+
+  return Session.create({
+    userId,
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date.now(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date.now(Date.now() + ONE_DAY),
+  });
+};
+
+export const setSessionCookies = (res, session) => {
+  res.cookie('accessToken', session.accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: FIFTEEN_MINUTES,
+    expires: new Date(Date.now() + FIFTEEN_MINUTES),
+  });
+
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: ONE_DAY,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: ONE_DAY,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+};

@@ -1,22 +1,33 @@
-import { celebrate } from 'celebrate';
 import { Router } from 'express';
+import { validate } from '../middleware/validate.js';
 import {
   createQuiz,
   deleteQuizById,
   getAllQuizzes,
   getQuizById,
+  updateQuizById,
 } from '../controllers/quizController.js';
 import {
   createQuizSchema,
+  deleteQuizByIdSchema,
   getAllQuizzesSchema,
-  quizIdSchema,
+  getQuizByIdSchema,
+  updateQuizByIdSchema,
 } from '../validations/quizValidation.js';
+import { authenticate, authorize } from '../middleware/authenticate.js';
 
 const quizRouter = Router();
 
-quizRouter.get('/quizzes', celebrate(getAllQuizzesSchema), getAllQuizzes);
-quizRouter.get('/quizzes/:quizId', celebrate(quizIdSchema), getQuizById);
-quizRouter.post('/quizzes', celebrate(createQuizSchema), createQuiz);
-quizRouter.delete('/quizzes/:quizId', celebrate(quizIdSchema), deleteQuizById);
+quizRouter.get('/', validate(getAllQuizzesSchema), getAllQuizzes);
+quizRouter.get('/:quizId', validate(getQuizByIdSchema), getQuizById);
+quizRouter.delete('/:quizId', validate(deleteQuizByIdSchema), deleteQuizById);
+quizRouter.post(
+  '/',
+  authenticate,
+  authorize('teacher', 'admin'),
+  validate(createQuizSchema),
+  createQuiz,
+);
+quizRouter.patch('/:quizId', validate(updateQuizByIdSchema), updateQuizById);
 
 export default quizRouter;

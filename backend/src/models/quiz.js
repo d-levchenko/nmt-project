@@ -1,28 +1,47 @@
-import { model, Schema } from 'mongoose';
-import { QUESTION_TYPES } from '../constants/questionType.js';
+import { Schema, model } from 'mongoose';
+
+const answerSchema = new Schema(
+  {
+    text: { type: String, required: true, trim: true, maxlength: 500 },
+  },
+  { _id: true },
+);
 
 const questionSchema = new Schema(
   {
-    questionText: { type: String, required: true, trim: true },
-    type: { type: String, enum: QUESTION_TYPES, required: true },
-    options: { type: [String], default: undefined },
-    correctAnswer: { type: Schema.Types.Mixed, required: true },
+    text: { type: String, required: true, trim: true, maxlength: 1000 },
+    answers: {
+      type: [answerSchema],
+      validate: {
+        validator: answers => answers.length >= 2 && answers.length <= 8,
+        message: 'Each question must have between 2 and 8 answers.',
+      },
+    },
+    correctAnswer: { type: Schema.Types.ObjectId, required: true },
   },
   { _id: true },
 );
 
 const quizSchema = new Schema(
   {
-    title: { type: String, required: true, trim: true },
+    title: { type: String, required: true, trim: true, maxlength: 150 },
+    description: { type: String, trim: true, maxlength: 1000, default: '' },
     questions: {
       type: [questionSchema],
       validate: {
-        validator: value => Array.isArray(value) && value.length > 0,
-        message: 'Quiz must contain at least one question',
+        validator: questions => questions.length >= 1,
+        message: 'A quiz must contain at least one question.',
       },
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
-  { timestamps: true, versionKey: false },
+  { timestamps: true },
 );
 
-export const QuizCollection = model('Quiz', quizSchema);
+quizSchema.index({ createdAt: 1 });
+
+export const Quiz = model('Quiz', quizSchema);
