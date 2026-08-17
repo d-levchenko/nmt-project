@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate } from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
 import {
   finishAttemptSchema,

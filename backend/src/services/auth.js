@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import { Session } from '../models/session';
-import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/time';
+import { Session } from '../models/session.js';
+import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/time.js';
 
 export const createSession = userId => {
   const accessToken = crypto.randomUUID();
