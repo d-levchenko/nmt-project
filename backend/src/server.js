@@ -13,6 +13,7 @@ import { connectMongoDB } from './db/connectDB.js';
 
 import quizRouter from './routes/quizRoutes.js';
 import attemptRouter from './routes/attemptRoutes.js';
+import authRouter from './routes/authRoutes.js';
 
 dns.setServers(['1.1.1.1', '8.8.8.8']);
 
@@ -25,8 +26,9 @@ app.use(cookieParser());
 app.use(logger);
 
 // routes
-app.use('api/quizzes', quizRouter);
-app.use('api/quiz-attemps', attemptRouter);
+app.use('/api/quizzes', quizRouter);
+app.use('/api/quiz-attempts', attemptRouter);
+app.use('/api/auth', authRouter);
 
 // 404
 app.use(notFoundHandler);
