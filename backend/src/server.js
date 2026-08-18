@@ -21,7 +21,12 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 
 app.use(express.json());
-app.use(cors({ origin: process.env.CORS_FRONTEND_URL, credentials: true }));
+app.use(
+  cors({
+    origin: String(process.env.CORS_FRONTEND_URL),
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(logger);
 

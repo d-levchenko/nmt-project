@@ -34,26 +34,30 @@ export const createQuiz = async (req, res) => {
 };
 
 export const getAllQuizzes = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.validated.query;
+  const { page, perPage } = req.validated.query;
   const skip = (page - 1) * perPage;
 
-  const quizQuery = await Quiz.find()
-    .sort({ createdAt: -1 })
-    .select('title description questions createdBy createdAt');
-
-  const [totalItems, quizzes] = await Promise.all([
-    quizQuery.clone().countDocuments(),
-    quizQuery.skip(skip).limit(perPage),
+  const [totalQuizzes, quizzes] = await Promise.all([
+    Quiz.countDocuments(),
+    Quiz.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(perPage)
+      .select('title description questions createdAt'),
   ]);
-
-  const totalPages = Math.ceil(totalItems / perPage);
 
   res.json({
     page,
     perPage,
-    totalQuizzes: totalItems,
-    totalPages,
-    quizzes,
+    totalQuizzes,
+    totalPages: Math.ceil(totalQuizzes / perPage),
+    quizzes: quizzes.map(quiz => ({
+      id: quiz._id.toString(),
+      title: quiz.title,
+      description: quiz.description,
+      questionCount: quiz.questions.length,
+      createdAt: quiz.createdAt,
+    })),
   });
 };
 

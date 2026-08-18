@@ -23,7 +23,7 @@ export const loginUser = async (payload: {
 };
 
 export const registerUser = async (payload: {
-  name: string;
+  username: string;
   email: string;
   password: string;
 }) => {
@@ -47,15 +47,16 @@ export const getQuizzes = async () => {
 
 export const getQuiz = async (id: string) => {
   const { data } = await apiClient.get<{ quiz: QuizDetails }>(`/quizzes/${id}`);
+
   return data.quiz;
 };
 
-export const createQuiz = async (payload: {
-  title: string;
-  description: string;
-  questions: { text: string; answers: string[]; correctAnswerIndex: number }[];
-}) => {
-  const { data } = await apiClient.post('/quizzes', payload);
+export const createQuiz = async (payload: unknown) => {
+  const { data } = await apiClient.post<{ quiz: QuizSummary }>(
+    '/quizzes',
+    payload,
+  );
+
   return data.quiz;
 };
 
@@ -69,11 +70,7 @@ export const startAttempt = async (payload: {
     id: string;
     quizId: string;
     quizTitle: string;
-    questions: {
-      id: string;
-      text: string;
-      answers: { id: string; text: string }[];
-    }[];
+    questions: QuizDetails['questions'];
   };
 };
 
@@ -81,7 +78,8 @@ export const finishAttempt = async (
   id: string,
   answers: {
     questionId: string;
-    selectedAnswerId: string;
+    selectedAnswerIds: string[];
+    answerText?: string;
     answerTime: number;
   }[],
 ) => {

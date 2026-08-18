@@ -1,10 +1,24 @@
 export type Role = 'student' | 'teacher' | 'admin';
 
+export type QuestionType = 'boolean' | 'input' | 'checkbox';
+
 export interface User {
   id: string;
-  name: string;
+  username: string;
   email: string;
   role: Role;
+}
+
+export interface Answer {
+  id: string;
+  text: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  type: QuestionType;
+  text: string;
+  answers: Answer[];
 }
 
 export interface QuizSummary {
@@ -15,17 +29,23 @@ export interface QuizSummary {
   createdAt: string;
 }
 
-export interface QuizQuestion {
-  id: string;
-  text: string;
-  answers: { id: string; text: string }[];
-}
-
 export interface QuizDetails extends QuizSummary {
   questions: QuizQuestion[];
 }
 
-export type RunQuestion = QuizQuestion;
+export interface AttemptResultAnswer {
+  questionId: string;
+  questionText: string;
+  type: QuestionType;
+  selectedAnswerIds: string[];
+  answerText: string;
+  correctAnswerIds: string[];
+  correctAnswerText: string;
+  correctAnswerTexts: string[];
+  selectedAnswerTexts: string[];
+  correct: boolean;
+  answerTime: number;
+}
 
 export interface AttemptResult {
   attemptId: string;
@@ -37,15 +57,7 @@ export interface AttemptResult {
   averageAnswerTime: number;
   scorePercentile: number | null;
   timePercentile: number | null;
-  answers: {
-    questionId: string;
-    questionText: string;
-    selectedAnswerId: string;
-    correctAnswerId: string;
-    correctAnswerText: string;
-    correct: boolean;
-    answerTime: number;
-  }[];
+  answers: AttemptResultAnswer[];
 }
 
 export interface HistoryItem {

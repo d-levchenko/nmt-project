@@ -10,8 +10,8 @@ export const createSession = userId => {
     userId,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date.now(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date.now(Date.now() + ONE_DAY),
+    accessTokenValidUntil: Date.now() + FIFTEEN_MINUTES,
+    refreshTokenValidUntil: Date.now() + ONE_DAY,
   });
 };
 
@@ -21,7 +21,7 @@ export const setSessionCookies = (res, session) => {
     secure: true,
     sameSite: 'none',
     maxAge: FIFTEEN_MINUTES,
-    expires: new Date(Date.now() + FIFTEEN_MINUTES),
+    expires: Date.now() + FIFTEEN_MINUTES,
   });
 
   res.cookie('refreshToken', session.refreshToken, {
@@ -29,7 +29,7 @@ export const setSessionCookies = (res, session) => {
     secure: true,
     sameSite: 'none',
     maxAge: ONE_DAY,
-    expires: new Date(Date.now() + ONE_DAY),
+    expires: Date.now() + ONE_DAY,
   });
 
   res.cookie('sessionId', session._id, {
@@ -37,6 +37,6 @@ export const setSessionCookies = (res, session) => {
     secure: true,
     sameSite: 'none',
     maxAge: ONE_DAY,
-    expires: new Date(Date.now() + ONE_DAY),
+    expires: Date.now() + ONE_DAY,
   });
 };

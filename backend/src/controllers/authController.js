@@ -27,13 +27,13 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.validated.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select('+password');
   if (!user) throw new createHttpError(401, 'Invalid credentials');
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new createHttpError(401, 'Invalid credentials');
 
-  await Session.deleteMany({ userId: user._id });
+  await Session.deleteOne({ userId: user._id });
   const newSession = await createSession(user._id);
   setSessionCookies(res, newSession);
 
