@@ -1,12 +1,19 @@
 import { HttpError } from 'http-errors';
 
 export const errorHandler = (err, req, res, next) => {
-  console.error(err);
-
-  if (err instanceof HttpError) {
-    return res.status(err.status).json({
-      message: err.message || err.name,
+  if (err?.name === 'ZodError') {
+    return res.status(400).json({
+      message: 'Validation failed.',
+      details: err.issues.map(
+        issue => `${issue.path.join('.')}: ${issue.message}`,
+      ),
     });
+  }
+
+  if (err instanceof HttpError || err?.statusCode) {
+    return res
+      .status(err.statusCode ?? err.status)
+      .json({ message: err.message });
   }
 
   const isProd = process.env.NODE_ENV === 'production';

@@ -5,10 +5,11 @@ import { createSession, setSessionCookies } from '../services/auth.js';
 import { Session } from '../models/session.js';
 
 export const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password } = req.validated.body;
 
   const existingUser = await User.findOne({ email });
-  if (existingUser) throw new createHttpError(400, 'User already exists');
+  if (existingUser)
+    throw new createHttpError(409, 'User with this email already exists');
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({
@@ -24,7 +25,7 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.validated.body;
 
   const user = await User.findOne({ email });
   if (!user) throw new createHttpError(401, 'Invalid credentials');
@@ -32,7 +33,7 @@ export const loginUser = async (req, res) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new createHttpError(401, 'Invalid credentials');
 
-  await Session.deleteOne({ userId: user._id });
+  await Session.deleteMany({ userId: user._id });
   const newSession = await createSession(user._id);
   setSessionCookies(res, newSession);
 
@@ -73,7 +74,7 @@ export const refreshUserSession = async (req, res) => {
     throw createHttpError(401, 'Session token expired');
   }
 
-  await session.deleteOne();
+  await session.deleteOne({ _id: sessionId });
   const newSession = await createSession(session.userId);
   setSessionCookies(res, newSession);
 

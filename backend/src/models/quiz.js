@@ -9,23 +9,47 @@ const answerSchema = new Schema(
 
 const questionSchema = new Schema(
   {
-    text: { type: String, required: true, trim: true, maxlength: 1000 },
+    type: {
+      type: String,
+      enum: ['boolean', 'input', 'checkbox'],
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 1000,
+    },
     answers: {
       type: [answerSchema],
-      validate: {
-        validator: answers => answers.length >= 2 && answers.length <= 8,
-        message: 'Each question must have between 2 and 8 answers.',
-      },
+      default: [],
     },
-    correctAnswer: { type: Schema.Types.ObjectId, required: true },
+    correctAnswerIds: {
+      type: [Schema.Types.ObjectId],
+      default: [],
+    },
+    correctAnswerText: {
+      type: String,
+      default: '',
+    },
   },
   { _id: true },
 );
 
 const quizSchema = new Schema(
   {
-    title: { type: String, required: true, trim: true, maxlength: 150 },
-    description: { type: String, trim: true, maxlength: 1000, default: '' },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 150,
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 1000,
+      default: '',
+    },
     questions: {
       type: [questionSchema],
       validate: {
@@ -42,6 +66,6 @@ const quizSchema = new Schema(
   { timestamps: true },
 );
 
-quizSchema.index({ createdAt: 1 });
+quizSchema.index({ createdAt: -1 });
 
 export const Quiz = model('Quiz', quizSchema);

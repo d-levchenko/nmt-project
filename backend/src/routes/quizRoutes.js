@@ -20,7 +20,12 @@ const quizRouter = Router();
 
 quizRouter.get('/', validate(getAllQuizzesSchema), getAllQuizzes);
 quizRouter.get('/:quizId', validate(getQuizByIdSchema), getQuizById);
-quizRouter.delete('/:quizId', validate(deleteQuizByIdSchema), deleteQuizById);
+quizRouter.delete(
+  '/:quizId',
+  authenticate,
+  validate(deleteQuizByIdSchema),
+  deleteQuizById,
+);
 quizRouter.post(
   '/',
   authenticate,
@@ -28,6 +33,11 @@ quizRouter.post(
   validate(createQuizSchema),
   createQuiz,
 );
-quizRouter.patch('/:quizId', validate(updateQuizByIdSchema), updateQuizById);
+quizRouter.patch(
+  '/:quizId',
+  authenticate,
+  validate(updateQuizByIdSchema),
+  updateQuizById,
+);
 
 export default quizRouter;

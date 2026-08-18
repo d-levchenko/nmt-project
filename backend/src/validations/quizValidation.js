@@ -1,21 +1,52 @@
 import { z } from 'zod';
 import objectIdValidator from './objectIdValidator.js';
 
-const questionSchema = z
-  .object({
-    text: z.string().trim().min(1).max(1000),
-    answers: z.array(z.string().trim().min(1).max(500)).min(2).max(8),
-    correctAnswerIndex: z.number().int().min(0),
+const baseQuestion = z.object({
+  questionText: z.string().trim().min(5).max(1000),
+});
+
+const booleanQuestion = baseQuestion.extend({
+  type: z.literal('boolean'),
+  correctAnswerBoolean: z.boolean(),
+});
+
+const inputQuestion = baseQuestion.extend({
+  type: z.literal('input'),
+  correctAnswerText: z.string().trim().min(1).max(500),
+});
+
+const checkboxQuestion = baseQuestion
+  .extend({
+    type: z.literal('checkbox'),
+    options: z.array(z.string().trim().min(1).max(500)).min(2).max(8),
+    correctAnswerCheckboxIndexes: z.array(z.number().int().min(0)).min(1),
   })
   .superRefine((question, ctx) => {
-    if (question.correctAnswerIndex >= question.answers.length) {
+    const unique = new Set(question.correctAnswerCheckboxIndexes);
+    if (unique.size !== question.correctAnswerCheckboxIndexes.length) {
       ctx.addIssue({
         code: 'custom',
-        path: ['correctAnswerIndex'],
-        message: 'Invalid correct answer index.',
+        path: ['correctAnswerCheckboxIndexes'],
+        message: 'Correct options must be unique.',
       });
     }
+    for (const index of unique) {
+      if (index >= question.options.length) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['correctAnswerCheckboxIndexes'],
+          message: 'Invalid correct option.',
+        });
+        break;
+      }
+    }
   });
+
+export const questionSchema = z.discriminatedUnion('type', [
+  booleanQuestion,
+  inputQuestion,
+  checkboxQuestion,
+]);
 
 export const createQuizSchema = z.object({
   body: z.object({
@@ -29,9 +60,6 @@ export const getAllQuizzesSchema = z.object({
   query: z.object({
     page: z.number().int().min(1).default(1),
     perPage: z.number().int().min(1).max(100).default(10),
-    totalQuizzes: z.boolean().default(false),
-    totalPages: z.number().int().min(1).default(1),
-    quizzes: z.array(questionSchema).default([]),
   }),
 });
 
@@ -51,9 +79,14 @@ export const updateQuizByIdSchema = z.object({
   params: z.object({
     quizId: objectIdValidator,
   }),
-  body: z.object({
-    title: z.string().trim().min(1).max(150).optional(),
-    description: z.string().trim().max(1000).optional(),
-    questions: z.array(questionSchema).optional(),
-  }),
+  body: z
+    .object({
+      title: z.string().trim().min(1).max(150).optional(),
+      description: z.string().trim().max(1000).optional(),
+      questions: z.array(questionSchema).optional(),
+    })
+    .refine(
+      value => Object.keys(value).length > 0,
+      'At least one field must be updated.',
+    ),
 });

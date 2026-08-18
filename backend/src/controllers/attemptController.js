@@ -12,7 +12,7 @@ const percentile = (values, value, higherIsBetter = true) => {
 };
 
 export const startAttempt = async (req, res) => {
-  const { quizId, questionCount } = req.body;
+  const { quizId, questionCount } = req.validated.body;
 
   const quiz = await Quiz.findById(quizId).select('title questions');
 
@@ -55,7 +55,7 @@ export const startAttempt = async (req, res) => {
 };
 
 export const finishAttempt = async (req, res) => {
-  const { answers } = req.body;
+  const { answers } = req.validated.body;
 
   const attempt = await QuizAttempt.findOne({
     _id: req.params.id,
@@ -162,7 +162,7 @@ export const finishAttempt = async (req, res) => {
 };
 
 export const getMyHistory = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.query;
+  const { page = 1, perPage = 10 } = req.validated.query;
   const skip = (page - 1) * perPage;
 
   const attemptsQuery = await QuizAttempt.find({ user: req.user._id })

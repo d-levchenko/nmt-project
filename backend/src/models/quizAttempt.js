@@ -6,9 +6,13 @@ const answerResultSchema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
     },
-    selectedAnswer: {
+    selectedAnswerIds: {
       type: Schema.Types.ObjectId,
       required: true,
+    },
+    answerText: {
+      type: String,
+      default: '',
     },
     correct: {
       type: Boolean,
@@ -69,6 +73,6 @@ const attemptSchema = new Schema(
   { timestamps: true },
 );
 
-attemptSchema.index({ quiz: 1, percentage: 1 });
+attemptSchema.index({ quiz: 1, percentage: 1, user: 1, createdAt: -1 });
 
 export const QuizAttempt = model('QuizAttempt', attemptSchema);

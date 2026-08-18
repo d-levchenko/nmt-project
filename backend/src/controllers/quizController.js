@@ -2,7 +2,7 @@ import createHttpError from 'http-errors';
 import { Quiz } from '../models/quiz.js';
 
 export const createQuiz = async (req, res) => {
-  const { title, description, questions } = req.body;
+  const { title, description, questions } = req.validated.body;
 
   const normalizedQuestions = questions.map(question => {
     const answers = question.answers.map(text => ({ text }));
@@ -34,7 +34,7 @@ export const createQuiz = async (req, res) => {
 };
 
 export const getAllQuizzes = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.query;
+  const { page = 1, perPage = 10 } = req.validated.query;
   const skip = (page - 1) * perPage;
 
   const quizQuery = await Quiz.find()
@@ -58,7 +58,7 @@ export const getAllQuizzes = async (req, res) => {
 };
 
 export const getQuizById = async (req, res) => {
-  const { quizId } = req.params;
+  const { quizId } = req.validated.params;
   const quiz = await Quiz.findById(quizId);
 
   if (!quiz) throw createHttpError(404, 'Quiz not found');
@@ -89,8 +89,8 @@ export const deleteQuizById = async (req, res) => {
 };
 
 export const updateQuizById = async (req, res) => {
-  const { quizId } = req.params;
-  const { title, description, questions } = req.body;
+  const { quizId } = req.validated.params;
+  const { title, description, questions } = req.validated.body;
 
   const normalizedQuestions = questions.map(question => {
     const answers = question.answers.map(text => ({ text }));
