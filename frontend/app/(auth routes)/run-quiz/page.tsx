@@ -283,9 +283,9 @@ function Result({ result }: { result: AttemptResult }) {
             }
           />
           <Stat
-            label="Questions"
+            label="Питань"
             value={String(result.totalQuestions)}
-            extra="Training session"
+            extra="Тренування"
           />
         </div>
       </div>
