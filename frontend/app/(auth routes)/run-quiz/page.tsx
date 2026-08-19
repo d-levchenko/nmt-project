@@ -177,7 +177,7 @@ function Runner() {
               className="mt-1 w-full rounded-lg border px-3 py-2"
             />
           </label>
-          {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-4 text-sm text-red-600">Сталася помилка: {error}</p>}
           <button
             onClick={() => start.mutate()}
             disabled={start.isPending}
@@ -237,7 +237,7 @@ function Runner() {
             ))}
           </div>
         )}
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-4 text-sm text-red-600">Cталася помилка: {error}</p>}
         <button
           disabled={!answerReady || finish.isPending}
           onClick={goNext}
