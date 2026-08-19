@@ -33,7 +33,7 @@ export const loginUser = async (req, res) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw createHttpError(401, 'Invalid credentials');
 
-  await Session.deleteOne({ userId: user._id });
+  await Session.deleteMany({ userId: user._id });
   const newSession = await createSession(user._id);
   setSessionCookies(res, newSession);
 

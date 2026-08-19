@@ -18,7 +18,7 @@ export const createSession = userId => {
 export const setSessionCookies = (res, session) => {
   const isProduction = process.env.NODE_ENV === 'production';
   const isSecure = isProduction;
-  const sameSite = isProduction ? 'strict' : 'lax';
+  const sameSite = isProduction ? 'none' : 'lax';
 
   res.cookie('accessToken', session.accessToken, {
     httpOnly: true,
