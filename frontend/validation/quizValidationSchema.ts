@@ -33,21 +33,11 @@ const checkboxSchema = Yup.object({
     .max(8, 'Має бути не більше 8 варіантів.')
     .required(),
   correctAnswerCheckboxIndexes: Yup.array()
-    .of(Yup.number().integer().min(0))
+    .of(Yup.number().integer().min(0, `Варіанти відповіді обов'язкові.`).required())
     .min(1, 'Виберіть хоча б один правильний варіант.')
     .required(),
-}).test(
-  'valid-indices',
-  'Selected correct options are invalid.',
-  value =>
-    !!value &&
-    value.correctAnswerCheckboxIndexes.every((index): boolean => {
-      if (typeof index !== 'number') {
-        return false;
-      }
-      return index < value.options.length;
-    }),
-);
+})
+
 
 export const quizValidationSchema = Yup.object({
   title: Yup.string().trim().min(1).max(150).required(`Назва обов'язкова.`),

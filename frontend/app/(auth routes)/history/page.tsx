@@ -57,9 +57,7 @@ function HistoryContent() {
                     {item.averageAnswerTime.toFixed(2)}s
                   </p>
                 </div>
-                <div className="text-sm text-slate-500">
-                  Переглянути результат →
-                </div>
+                <div className="text-sm text-slate-500">Деталі тесту →</div>
               </Link>
             ))}
           </div>

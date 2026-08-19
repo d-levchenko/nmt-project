@@ -47,7 +47,7 @@ function QuestionEditor({
           className="rounded-lg border bg-white px-3 py-2">
           {TYPES.map(type => (
             <option key={type} value={type}>
-              {type}
+              {type === 'boolean' ? 'Так/Ні' : type === 'input' ? 'Текст' : 'Декілька'}
             </option>
           ))}
         </select>
@@ -118,7 +118,7 @@ function QuestionEditor({
                 <div key={optionIndex} className="flex items-center gap-2">
                   <Field
                     name={`${base}.options.${optionIndex}`}
-                    placeholder={`Option ${optionIndex + 1}`}
+                    placeholder={`Варіант ${optionIndex + 1}`}
                     className="flex-1 rounded-lg border bg-white px-3 py-2"
                   />
                   <label className="flex items-center gap-1 text-sm">
@@ -161,11 +161,9 @@ function QuestionEditor({
                   )}
                 </div>
               ))}
-              <ErrorMessage
-                name={`${base}.options`}
-                component="p"
-                className="text-sm text-red-600"
-              />
+              <ErrorMessage name={`${base}.options`}>
+                {() => <p className="text-sm text-red-600">Варінти відповіді обов&apos;язкові</p>}
+              </ErrorMessage>
               <ErrorMessage
                 name={`${base}.correctAnswerCheckboxIndexes`}
                 component="p"
@@ -258,7 +256,12 @@ const QuizForm = () => {
                       key={type}
                       onClick={() => push(createEmptyQuestion(type))}
                       className="rounded-lg border bg-white px-3 py-2 text-sm">
-                      + {type} питання
+                      +{' '}
+                      {type === 'boolean'
+                        ? 'Питання з двома варіантами (так/ні)'
+                        : type === 'input'
+                          ? 'Текстове питання'
+                          : 'Питання з декількома варіантами відповіді'}
                     </button>
                   ))}
                 </div>
