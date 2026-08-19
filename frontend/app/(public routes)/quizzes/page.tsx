@@ -18,7 +18,7 @@ const Quizzes = () => {
           Оберіть тест та тренуйтеся у своєму власному темпі.
         </p>
       </div>
-      {isLoading && <p>Loading quizzes…</p>}
+      {isLoading && <p>Завантаження тестів...</p>}
       {error && <p className="text-red-600">Не вдалося завантажити тести.</p>}
       <div className="grid gap-5 md:grid-cols-2">
         {data?.map(quiz => (

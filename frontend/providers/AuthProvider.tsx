@@ -12,7 +12,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const setUser = useAuthStore(state => state.setUser);
   const setInitialized = useAuthStore(state => state.setInitialized);
   const clear = useAuthStore(state => state.clear);
-  const initialized = useAuthStore(state => state.initialized);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,14 +37,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       cancelled = true;
     };
   }, [setUser, setInitialized, clear]);
-
-  if (!initialized) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-slate-500">
-        Перевірка авторизації...
-      </div>
-    );
-  }
 
   return <>{children}</>;
 };
