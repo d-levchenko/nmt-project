@@ -61,12 +61,16 @@ export interface AttemptResult {
 }
 
 export interface HistoryItem {
-  id: string;
-  quizId: string;
-  quizTitle: string;
+  _id: string;
+  quiz: {
+    _id: string;
+    title: string;
+  };
   correctAnswers: number;
   totalQuestions: number;
   percentage: number;
   averageAnswerTime: number;
   createdAt: string;
+  completedAt: string;
+  totalTime: number;
 }

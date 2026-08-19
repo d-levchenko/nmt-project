@@ -12,18 +12,18 @@ interface SessionResponse {
 }
 
 export const getMe = async () => {
-  const { data } = await apiClient.get<{ user: User }>('/auth/me');
+  const { data } = await apiClient.get<User>('/auth/me');
 
-  return data.user;
+  return data;
 };
 
 export const loginUser = async (payload: {
   email: string;
   password: string;
 }) => {
-  const { data } = await apiClient.post<{ user: User }>('/auth/login', payload);
+  const { data } = await apiClient.post<User>('/auth/login', payload);
 
-  return data.user;
+  return data;
 };
 
 export const registerUser = async (payload: {
@@ -31,12 +31,9 @@ export const registerUser = async (payload: {
   email: string;
   password: string;
 }) => {
-  const { data } = await apiClient.post<{ user: User }>(
-    '/auth/register',
-    payload,
-  );
+  const { data } = await apiClient.post<User>('/auth/register', payload);
 
-  return data.user;
+  return data;
 };
 
 export const logoutUser = async () => {

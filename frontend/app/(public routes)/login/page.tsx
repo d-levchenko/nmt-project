@@ -30,7 +30,6 @@ const Login = () => {
       router.push(params.get('next') || '/quizzes');
     } catch (error) {
       setStatus(getApiError(error));
-      setInitialized(false);
     } finally {
       setSubmitting(false);
     }

@@ -162,10 +162,10 @@ export const finishAttempt = async (req, res) => {
 };
 
 export const getMyHistory = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.validated.query;
+  const { page = 1, perPage = 10 } = req.query;
   const skip = (page - 1) * perPage;
 
-  const attemptsQuery = await QuizAttempt.find({ user: req.user._id })
+  const attemptsQuery = QuizAttempt.find({ user: req.user._id })
     .populate('quiz', 'title')
     .sort({ createdAt: -1 });
 

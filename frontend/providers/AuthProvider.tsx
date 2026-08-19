@@ -1,6 +1,7 @@
 'use client';
+
 import { useEffect } from 'react';
-import { getMe, refreshUserSession } from '@/lib/api';
+import { getMe } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 interface AuthProviderProps {
@@ -8,35 +9,43 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const setUser = useAuthStore(s => s.setUser);
-  const setInitialized = useAuthStore(s => s.setInitialized);
-  const clear = useAuthStore(s => s.clear);
+  const setUser = useAuthStore(state => state.setUser);
+  const setInitialized = useAuthStore(state => state.setInitialized);
+  const clear = useAuthStore(state => state.clear);
+  const initialized = useAuthStore(state => state.initialized);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    let cancelled = false;
+
+    const initializeAuth = async () => {
       try {
-        const isAuth = await refreshUserSession();
-
-        if (!isAuth) {
-          clear();
-          return;
-        }
-
         const user = await getMe();
-        if (!user) {
-          clear();
-          return;
-        }
 
-        setUser(user);
-        setInitialized(true);
+        if (!cancelled) {
+          setUser(user);
+          setInitialized(true);
+        }
       } catch {
-        clear();
+        if (!cancelled) {
+          clear();
+        }
       }
     };
 
-    fetchUser();
+    initializeAuth();
+
+    return () => {
+      cancelled = true;
+    };
   }, [setUser, setInitialized, clear]);
+
+  if (!initialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-slate-500">
+        Checking authentication…
+      </div>
+    );
+  }
 
   return <>{children}</>;
 };

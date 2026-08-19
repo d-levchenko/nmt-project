@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import type { User } from '@/types';
-import { persist } from 'zustand/middleware';
 
 interface AuthStore {
   user: User | null;
@@ -10,18 +9,16 @@ interface AuthStore {
   clear: () => void;
 }
 
-export const useAuthStore = create<AuthStore>()(
-  persist(
-    set => ({
+export const useAuthStore = create<AuthStore>(set => ({
+  user: null,
+  initialized: false,
+
+  setUser: user => set({ user }),
+  setInitialized: initialized => set({ initialized }),
+
+  clear: () =>
+    set({
       user: null,
-      initialized: false,
-      setUser: user => set({ user }),
-      setInitialized: initialized => set({ initialized }),
-      clear: () => set({ user: null, initialized: true }),
+      initialized: true,
     }),
-    {
-      name: 'auth',
-      partialize: state => ({ initialized: state.initialized }),
-    },
-  ),
-);
+}));

@@ -10,6 +10,7 @@ import { registerSchema } from '@/validation/authValidation';
 const Register = () => {
   const router = useRouter();
   const setUser = useAuthStore(s => s.setUser);
+  const setInitialized = useAuthStore(s => s.setInitialized);
 
   return (
     <main className="mx-auto max-w-md px-4 py-12">
@@ -25,7 +26,8 @@ const Register = () => {
             try {
               const user = await registerUser(values);
               setUser(user);
-              router.push('/login');
+              setInitialized(true);
+              router.push('/quizzes');
             } catch (e) {
               setStatus(getApiError(e));
             } finally {

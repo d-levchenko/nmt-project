@@ -3,6 +3,7 @@ import { authenticate } from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
 import {
   finishAttemptSchema,
+  historySchema,
   startAttemptSchema,
 } from '../validations/attemptValidation.js';
 import {
@@ -16,6 +17,6 @@ attemptRouter.use(authenticate);
 
 attemptRouter.post('/start', validate(startAttemptSchema), startAttempt);
 attemptRouter.post('/:id/finish', validate(finishAttemptSchema), finishAttempt);
-attemptRouter.get('/me', getMyHistory);
+attemptRouter.get('/me', validate(historySchema), getMyHistory);
 
 export default attemptRouter;
