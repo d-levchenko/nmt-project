@@ -1,157 +1,105 @@
-# Quiz Builder
+# NMT Testing
 
-A full-stack Quiz Builder application where users can create, view, and delete quizzes with multiple question types.
+Full-stack застосунок для створення тестів і тренування. Користувачі можуть
+переглядати доступні тести, проходити їх, отримувати результат і переглядати
+історію спроб. Користувачі з роллю `teacher` або `admin` також можуть створювати
+та редагувати тести.
 
-## Tech Stack
+## Технології
 
 ### Frontend
 
-* Next.js
-* React
-* TypeScript
-* TanStack Query
-* Formik
-* Axios
-* CSS Modules
+- Next.js 16 та React 19
+- TypeScript
+- TanStack Query
+- Formik і Yup
+- Axios
+- Zustand
+- Tailwind CSS
 
 ### Backend
 
-* Express.js
-* TypeScript / JavaScript
-* MongoDB
-* Mongoose
+- Node.js та Express 5
+- MongoDB і Mongoose
+- Zod для валідації
+- AUTH-токени в cookie, cookie-parser і bcrypt для автентифікації
+- Pino для логування
 
----
-
-## Project Structure
+## Структура проєкту
 
 ```text
-quiz-builder/
-├── backend/
-├── frontend/
+nmt-testing-original/
+├── backend/    # REST API та робота з MongoDB
+├── frontend/   # вебзастосунок Next.js
 └── README.md
 ```
 
----
+## Запуск
 
-## Getting Started
+Потрібні Node.js та доступний екземпляр MongoDB.
 
-### 1. Clone the repository
+1. Встановіть залежності:
 
-```bash
-git clone https://github.com/d-levchenko/quiz-builder
+  ```bash
+  cd backend
+  npm install
 
-cd quiz-builder
-```
+  cd ../frontend
+  npm install
+  ```
 
----
+2. Створіть `backend/.env`:
 
-### 2. Install dependencies
+  ```env
+  PORT=3001
+  MONGO_URL=mongodb://localhost:27017/nmt-testing
+  CORS_FRONTEND_URL=http://localhost:3000
+  ```
 
-Backend
+3. Створіть `frontend/.env.local`:
 
-```bash
-cd backend
-npm install
-```
+  ```env
+  NEXT_PUBLIC_API_URL=http://localhost:3001
+  ```
 
-Frontend
+4. Запустіть backend у першому терміналі:
 
-```bash
-cd frontend
-npm install
-```
+  ```bash
+  cd backend
+  npm run dev
+  ```
 
----
+5. Запустіть frontend в іншому терміналі:
 
-### 3. Configure environment variables
+  ```bash
+  cd frontend
+  npm run dev
+  ```
 
-Create a `.env` file in each project.
+Вебзастосунок буде доступний за адресою `http://localhost:3000`, а API — за
+адресою `http://localhost:3001/api`.
 
-Backend:
+## Основні можливості
 
-```env
-PORT=3001
+- реєстрація, вхід, вихід і автоматичне оновлення сесії;
+- перегляд списку тестів і деталей окремого тесту;
+- створення тестів із питаннями типів `boolean`, `input` і `checkbox`;
+- проходження тесту з вибором кількості питань;
+- перевірка відповідей і розрахунок результату та середнього часу відповіді;
+- перегляд історії завершених спроб;
+- керування тестами для ролей `teacher` та `admin`.
 
-MONGO_URL=your_mongo_link
+## Маршрути frontend
 
-CORS_FRONTEND_URL=http://localhost:3000
-```
+| Маршрут | Призначення |
+| --- | --- |
+| `/quizzes` | Список доступних тестів |
+| `/quizzes/:id` | Деталі тесту |
+| `/login` | Вхід |
+| `/register` | Реєстрація |
+| `/create` | Створення тесту для `teacher`/`admin` |
+| `/run-quiz?quizId=:id` | Проходження тесту |
+| `/history` | Історія власних спроб |
 
-Frontend:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
-```
-
----
-
-### 4. Start the backend
-
-```bash
-cd backend
-npm run dev
-```
-
-The API will be available at:
-
-```
-http://localhost:3001
-```
-
-Make sure to follow the instructions in the `README.md` file for the backend.
-
----
-
-### 5. Start the frontend
-
-Open another terminal.
-
-```bash
-cd frontend
-npm run dev
-```
-
-The application will be available at:
-
-```
-http://localhost:3000
-```
-
-
-Make sure to follow the instructions in the `README.md` file for the frontend.
-
----
-
-## Features
-
-* Create quizzes
-* Add multiple questions
-* Supported question types:
-
-  * Boolean (True / False)
-  * Short text input
-  * Multiple choice (Checkbox)
-* View all quizzes
-* View quiz details
-* Delete quizzes
-
----
-
-## API Endpoints
-
-| Method | Endpoint       | Description      |
-| ------ | -------------- | ---------------- |
-| GET    | `/quizzes`     | Get all quizzes  |
-| GET    | `/quizzes/:id` | Get quiz details |
-| POST   | `/quizzes`     | Create a quiz    |
-| DELETE | `/quizzes/:id` | Delete a quiz    |
-
----
-
-## Notes
-
-* MongoDB is used as the database.
-* TanStack Query is used for data fetching and caching.
-* Axios is used for HTTP requests.
-* CSS Modules are used for styling.
+Детальні інструкції доступні у [README backend](backend/README.md) та
+[README frontend](frontend/README.md).

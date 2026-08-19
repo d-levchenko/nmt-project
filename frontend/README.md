@@ -1,69 +1,76 @@
 # Frontend
 
-Next.js frontend for the Quiz Builder application.
+Вебінтерфейс NMT Testing на Next.js. Застосунок дає змогу переглядати тести,
+реєструватися, проходити тренування та відстежувати результати.
 
-## Technologies
+## Технології
 
-- Next.js
-- React
+- Next.js 16 та React 19
 - TypeScript
-- TanStack Query
-- Axios
-- Formik
-- CSS Modules
+- TanStack Query і Devtools для запитів та кешування
+- Axios для взаємодії з API
+- Formik і Yup для форм та валідації
+- Zustand для стану автентифікації
+- Tailwind CSS
 
----
-
-## Installation
+## Встановлення
 
 ```bash
 npm install
 ```
 
----
+## Налаштування
 
-## Environment Variables
-
-Create a `.env` file.
+Створіть файл `.env.local` у папці `frontend`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
----
+Клієнт автоматично додає до цього значення шлях `/api`, тому запити
+надсилаються на `http://localhost:3001/api`.
 
-## Start the application
+## Запуск
 
-Development
+Режим розробки:
 
 ```bash
 npm run dev
 ```
 
-The application runs at:
+Production-збірка та запуск:
 
+```bash
+npm run build
+npm start
 ```
-http://localhost:3000
+
+Перевірка стилю коду:
+
+```bash
+npm run lint
 ```
 
----
+Застосунок буде доступний за адресою `http://localhost:3000`.
 
-## Pages
+## Сторінки
 
-| Route          | Description       |
-| -------------- | ----------------- |
-| `/`            | Home page         |
-| `/create`      | Create a new quiz |
-| `/quizzes`     | List all quizzes  |
-| `/quizzes/:id` | View quiz details |
+| Маршрут | Доступ | Опис |
+| --- | --- | --- |
+| `/quizzes` | Публічний | Список доступних тестів |
+| `/quizzes/:id` | Публічний | Деталі тесту та перехід до тренування |
+| `/login` | Публічний | Вхід користувача |
+| `/register` | Публічний | Створення облікового запису |
+| `/create` | `teacher`, `admin` | Створення тесту |
+| `/run-quiz?quizId=:id` | Авторизований | Проходження тесту |
+| `/history` | Авторизований | Історія завершених спроб |
 
----
+## Можливості
 
-## Features
-
-- Create quizzes dynamically
-- Multiple question types
-- Client-side validation
-- Cached API requests using TanStack Query
-- Delete quizzes
-- Responsive layout
+- захищені маршрути та автоматичне відновлення сесії;
+- створення тестів із питаннями типів `boolean`, `input` і `checkbox`;
+- вибір кількості питань перед початком тренування;
+- введення текстових відповідей і вибір одного або кількох варіантів;
+- відображення результату, відсотка правильних відповідей і часу;
+- кешування та повторне отримання даних через TanStack Query;
+- адаптивний інтерфейс для різних розмірів екрана.
