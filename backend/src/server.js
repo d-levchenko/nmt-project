@@ -20,13 +20,30 @@ dns.setServers(['1.1.1.1', '8.8.8.8']);
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 
-app.use(express.json());
+const allowedOrigins = [
+  process.env.CORS_FRONTEND_URL?.replace(/\/$/, ''),
+  'http://localhost:3000',
+];
+
 app.use(
   cors({
-    origin: String(process.env.CORS_FRONTEND_URL),
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app');
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Blocked by CORS'));
+      }
+    },
     credentials: true,
-  }),
+  })
 );
+app.use(express.json());
 app.use(cookieParser());
 app.use(logger);
 
