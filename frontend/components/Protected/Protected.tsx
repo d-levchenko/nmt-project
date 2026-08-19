@@ -24,6 +24,14 @@ const Protected = ({
       </div>
     );
 
+  if (roles && !roles.includes(user.role)) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+        Доступ заборонено для вашої ролі.
+      </div>
+    );
+  }
+
   return <>{children}</>;
 };
 
