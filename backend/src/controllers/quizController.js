@@ -1,16 +1,55 @@
 import createHttpError from 'http-errors';
 import { Quiz } from '../models/quiz.js';
+import { Types } from 'mongoose';
 
 export const createQuiz = async (req, res) => {
   const { title, description, questions } = req.validated.body;
 
   const normalizedQuestions = questions.map(question => {
-    const answers = question.answers.map(text => ({ text }));
-    return {
-      text: question.text,
-      answers,
-      correctAnswer: answers[question.correctAnswerIndex]._id,
-    };
+    switch (question.type) {
+      case 'boolean': {
+        const answers = [
+          { _id: new Types.ObjectId(), text: 'Так' },
+          { _id: new Types.ObjectId(), text: 'Ні' },
+        ];
+
+        return {
+          type: 'boolean',
+          text: question.questionText,
+          answers,
+          correctAnswerIds: [
+            answers[question.correctAnswerBoolean ? 0 : 1]._id,
+          ],
+          correctAnswerText: '',
+        };
+      }
+
+      case 'input':
+        return {
+          type: 'input',
+          text: question.questionText,
+          answers: [],
+          correctAnswerIds: [],
+          correctAnswerText: question.correctAnswerText,
+        };
+
+      case 'checkbox': {
+        const answers = question.options.map(text => ({
+          _id: new Types.ObjectId(),
+          text,
+        }));
+
+        return {
+          type: 'checkbox',
+          text: question.questionText,
+          answers,
+          correctAnswerIds: question.correctAnswerCheckboxIndexes.map(
+            index => answers[index]._id,
+          ),
+          correctAnswerText: '',
+        };
+      }
+    }
   });
 
   const quiz = await Quiz.create({
@@ -70,6 +109,7 @@ export const getQuizById = async (req, res) => {
   res.json({
     quiz: {
       id: quiz._id,
+      type: quiz.type,
       title: quiz.title,
       description: quiz.description,
       questionCount: quiz.questions.length,

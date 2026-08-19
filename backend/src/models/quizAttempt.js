@@ -6,10 +6,10 @@ const answerResultSchema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
     },
-    selectedAnswerIds: {
+    selectedAnswerIds: [{
       type: Schema.Types.ObjectId,
       required: true,
-    },
+    }],
     answerText: {
       type: String,
       default: '',

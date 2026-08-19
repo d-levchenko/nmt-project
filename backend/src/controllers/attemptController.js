@@ -16,10 +16,10 @@ export const startAttempt = async (req, res) => {
 
   const quiz = await Quiz.findById(quizId).select('title questions');
 
-  if (!quiz) throw new createHttpError(404, 'Quiz not found');
+  if (!quiz) throw createHttpError(404, 'Quiz not found');
 
   if (questionCount > quiz.questions.length)
-    throw new createHttpError(
+    throw createHttpError(
       400,
       `This quiz has only ${quiz.questions.length} questions.`,
     );
@@ -47,6 +47,7 @@ export const startAttempt = async (req, res) => {
       quizTitle: quiz.title,
       questions: shuffled.map(q => ({
         id: q._id,
+        type: q.type,
         text: q.text,
         answers: q.answers.map(a => ({ id: a._id, text: a.text })),
       })),
@@ -62,9 +63,9 @@ export const finishAttempt = async (req, res) => {
     user: req.user._id,
   });
 
-  if (!attempt) return res.status(404).json({ message: 'Attempt not found.' });
+  if (!attempt) throw createHttpError(404, 'Attempt not found.');
   if (attempt.answers.length)
-    throw new createHttpError(400, 'This attempt has already been completed.');
+    throw createHttpError(400, 'This attempt has already been completed.');
 
   const quiz = await Quiz.findById(attempt.quiz).select('title questions');
   const selectedQuestionIds = new Set(answers.map(a => a.questionId));
@@ -81,21 +82,87 @@ export const finishAttempt = async (req, res) => {
     selectedQuestionIds.size !== answers.length ||
     !allQuestionsBelongToAttempt
   )
-    throw new createHttpError(400, 'Invalid attempt.');
+    throw createHttpError(400, 'Invalid attempt.');
 
   const results = [];
   for (const submitted of answers) {
     const question = quiz.questions.id(submitted.questionId);
 
-    if (!question)
-      throw new createHttpError(400, 'Invalid question in attempt.');
-    const selected = question.answers.id(submitted.selectedAnswerId);
-    if (!selected) throw new createHttpError(400, 'Invalid answer in attempt.');
+    if (!question) {
+      throw createHttpError(400, 'Invalid question in attempt.');
+    }
+
+    let correct = false;
+
+    switch (question.type) {
+      case 'boolean': {
+        if (submitted.selectedAnswerIds.length !== 1) {
+          throw createHttpError(
+            400,
+            'Boolean question requires exactly one answer.',
+          );
+        }
+
+        const selectedId = submitted.selectedAnswerIds[0];
+
+        const selectedAnswer = question.answers.id(selectedId);
+
+        if (!selectedAnswer) {
+          throw createHttpError(400, 'Invalid answer for question.');
+        }
+
+        correct =
+          question.correctAnswerIds.length === 1 &&
+          question.correctAnswerIds[0].toString() === selectedId.toString();
+
+        break;
+      }
+      case 'checkbox': {
+        const selectedIds = submitted.selectedAnswerIds.map(id =>
+          id.toString(),
+        );
+
+        const allAnswersExist = selectedIds.every(id =>
+          question.answers.id(id),
+        );
+
+        if (!allAnswersExist) {
+          throw createHttpError(400, 'Invalid answer for question.');
+        }
+
+        const correctIds = question.correctAnswerIds
+          .filter(Boolean)
+          .map(id => id.toString());
+
+        const sameIds = (first, second) => {
+          if (first.length !== second.length) return false;
+
+          const firstSet = new Set(first.map(id => id.toString()));
+          const secondSet = new Set(second.map(id => id.toString()));
+
+          return [...firstSet].every(id => secondSet.has(id));
+        };
+
+        correct = sameIds(selectedIds, correctIds);
+
+        break;
+      }
+      case 'input': {
+        const normalizeAnswer = value => value.trim().toLowerCase();
+        const submittedText = normalizeAnswer(submitted.answerText);
+        const correctText = normalizeAnswer(question.correctAnswerText);
+
+        correct = submittedText === correctText;
+
+        break;
+      }
+    }
 
     results.push({
       question: question._id,
-      selectedAnswer: selected._id,
-      correct: question.correctAnswer.toString() === selected._id.toString(),
+      selectedAnswerIds: submitted.selectedAnswerIds,
+      answerText: submitted.answerText,
+      correct,
       answerTime: submitted.answerTime,
     });
   }
@@ -149,10 +216,11 @@ export const finishAttempt = async (req, res) => {
         return {
           questionId: result.question,
           questionText: question.text,
-          selectedAnswerId: result.selectedAnswer,
-          correctAnswerId: question.correctAnswer,
-          correctAnswerText:
-            question.answers.id(question.correctAnswer)?.text ?? '',
+          type: question.type,
+          selectedAnswerIds: result.selectedAnswerIds,
+          correctAnswerIds: question.correctAnswerIds,
+          answerText: result.answerText,
+          correctAnswerText: question.correctAnswerText || null,
           correct: result.correct,
           answerTime: result.answerTime,
         };

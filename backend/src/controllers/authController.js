@@ -9,7 +9,7 @@ export const registerUser = async (req, res) => {
 
   const existingUser = await User.findOne({ email });
   if (existingUser)
-    throw new createHttpError(409, 'User with this email already exists');
+    throw createHttpError(409, 'User with this email already exists');
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({
@@ -28,10 +28,10 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.validated.body;
 
   const user = await User.findOne({ email }).select('+password');
-  if (!user) throw new createHttpError(401, 'Invalid credentials');
+  if (!user) throw createHttpError(401, 'Invalid credentials');
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) throw new createHttpError(401, 'Invalid credentials');
+  if (!isPasswordValid) throw createHttpError(401, 'Invalid credentials');
 
   await Session.deleteOne({ userId: user._id });
   const newSession = await createSession(user._id);

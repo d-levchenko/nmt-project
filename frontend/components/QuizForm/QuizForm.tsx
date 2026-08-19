@@ -47,7 +47,11 @@ function QuestionEditor({
           className="rounded-lg border bg-white px-3 py-2">
           {TYPES.map(type => (
             <option key={type} value={type}>
-              {type === 'boolean' ? 'Так/Ні' : type === 'input' ? 'Текст' : 'Декілька'}
+              {type === 'boolean'
+                ? 'Так/Ні'
+                : type === 'input'
+                  ? 'Текст'
+                  : 'Декілька'}
             </option>
           ))}
         </select>
@@ -111,72 +115,89 @@ function QuestionEditor({
 
       {question.type === 'checkbox' && (
         <FieldArray name={`${base}.options`}>
-          {({ push, remove }) => (
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Варіанти відповіді</p>
-              {question.options.map((_, optionIndex) => (
-                <div key={optionIndex} className="flex items-center gap-2">
-                  <Field
-                    name={`${base}.options.${optionIndex}`}
-                    placeholder={`Варіант ${optionIndex + 1}`}
-                    className="flex-1 rounded-lg border bg-white px-3 py-2"
-                  />
-                  <label className="flex items-center gap-1 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={question.correctAnswerCheckboxIndexes.includes(
-                        optionIndex,
-                      )}
-                      onChange={event => {
-                        const current = question.correctAnswerCheckboxIndexes;
-                        const next = event.target.checked
-                          ? [...current, optionIndex]
-                          : current.filter(index => index !== optionIndex);
-                        setFieldValue(
-                          `${base}.correctAnswerCheckboxIndexes`,
-                          next,
-                        );
-                      }}
+          {({ push, remove }) => {
+            const options = question.options ?? [];
+            const correctIndexes = question.correctAnswerCheckboxIndexes ?? [];
+
+            return (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Варіанти відповіді</p>
+
+                {options.map((_, optionIndex) => (
+                  <div key={optionIndex} className="flex items-center gap-2">
+                    <Field
+                      name={`${base}.options.${optionIndex}`}
+                      placeholder={`Варіант ${optionIndex + 1}`}
+                      className="flex-1 rounded-lg border bg-white px-3 py-2"
                     />
-                    Правильна
-                  </label>
-                  {question.options.length > 2 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        remove(optionIndex);
-                        const next = question.correctAnswerCheckboxIndexes
-                          .filter(index => index !== optionIndex)
-                          .map(index =>
-                            index > optionIndex ? index - 1 : index,
+
+                    <label className="flex items-center gap-1 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={correctIndexes.includes(optionIndex)}
+                        onChange={event => {
+                          const next = event.target.checked
+                            ? [...correctIndexes, optionIndex]
+                            : correctIndexes.filter(
+                                index => index !== optionIndex,
+                              );
+
+                          setFieldValue(
+                            `${base}.correctAnswerCheckboxIndexes`,
+                            next,
                           );
-                        setFieldValue(
-                          `${base}.correctAnswerCheckboxIndexes`,
-                          next,
-                        );
-                      }}
-                      className="text-sm text-red-600">
-                      Видалити
-                    </button>
+                        }}
+                      />
+                      Правильна
+                    </label>
+
+                    {options.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          remove(optionIndex);
+
+                          const next = correctIndexes
+                            .filter(index => index !== optionIndex)
+                            .map(index =>
+                              index > optionIndex ? index - 1 : index,
+                            );
+
+                          setFieldValue(
+                            `${base}.correctAnswerCheckboxIndexes`,
+                            next,
+                          );
+                        }}
+                        className="text-sm text-red-600">
+                        Видалити
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <ErrorMessage name={`${base}.options`}>
+                  {() => (
+                    <p className="text-sm text-red-600">
+                      Варіанти відповіді обов&apos;язкові
+                    </p>
                   )}
-                </div>
-              ))}
-              <ErrorMessage name={`${base}.options`}>
-                {() => <p className="text-sm text-red-600">Варінти відповіді обов&apos;язкові</p>}
-              </ErrorMessage>
-              <ErrorMessage
-                name={`${base}.correctAnswerCheckboxIndexes`}
-                component="p"
-                className="text-sm text-red-600"
-              />
-              <button
-                type="button"
-                onClick={() => push('')}
-                className="rounded-lg border bg-white px-3 py-2 text-sm">
-                + Додати варіант
-              </button>
-            </div>
-          )}
+                </ErrorMessage>
+
+                <ErrorMessage
+                  name={`${base}.correctAnswerCheckboxIndexes`}
+                  component="p"
+                  className="text-sm text-red-600"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => push('')}
+                  className="rounded-lg border bg-white px-3 py-2 text-sm">
+                  + Додати варіант
+                </button>
+              </div>
+            );
+          }}
         </FieldArray>
       )}
     </div>
