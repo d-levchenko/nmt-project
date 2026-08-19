@@ -17,10 +17,11 @@ export const useAuthStore = create<AuthStore>()(
       initialized: false,
       setUser: user => set({ user }),
       setInitialized: initialized => set({ initialized }),
-      clear: () => set({ user: null }),
+      clear: () => set({ user: null, initialized: true }),
     }),
     {
       name: 'auth',
+      partialize: state => ({ initialized: state.initialized }),
     },
   ),
 );

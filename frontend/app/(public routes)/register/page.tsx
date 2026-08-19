@@ -1,25 +1,11 @@
 'use client';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { getApiError } from '@/lib/error';
-
-const schema = Yup.object({
-  username: Yup.string()
-    .trim()
-    .min(2)
-    .max(60)
-    .required('Username is required.'),
-  email: Yup.string()
-    .email('Enter a valid email.')
-    .required('Email is required.'),
-  password: Yup.string()
-    .min(8, 'Password must be at least 8 characters.')
-    .required('Password is required.'),
-});
+import { registerSchema } from '@/validation/authValidation';
 
 const Register = () => {
   const router = useRouter();
@@ -34,7 +20,7 @@ const Register = () => {
         </p>
         <Formik
           initialValues={{ username: '', email: '', password: '' }}
-          validationSchema={schema}
+          validationSchema={registerSchema}
           onSubmit={async (values, { setSubmitting, setStatus }) => {
             try {
               const user = await registerUser(values);

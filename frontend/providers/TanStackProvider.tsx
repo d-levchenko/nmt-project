@@ -9,8 +9,7 @@ const TanStackProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider />
-      {children}
+      <AuthProvider>{children}</AuthProvider>
     </QueryClientProvider>
   );
 };

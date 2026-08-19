@@ -2,13 +2,13 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-export default function Protected({
+const Protected = ({
   children,
   roles,
 }: {
   children: React.ReactNode;
   roles?: ('student' | 'teacher' | 'admin')[];
-}) {
+}) => {
   const router = useRouter();
   const { user, initialized } = useAuthStore();
 
@@ -25,4 +25,6 @@ export default function Protected({
     );
 
   return <>{children}</>;
-}
+};
+
+export default Protected;

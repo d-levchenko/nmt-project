@@ -7,6 +7,10 @@ import type {
   User,
 } from '@/types';
 
+interface SessionResponse {
+  success: boolean;
+}
+
 export const getMe = async () => {
   const { data } = await apiClient.get<{ user: User }>('/auth/me');
 
@@ -37,6 +41,12 @@ export const registerUser = async (payload: {
 
 export const logoutUser = async () => {
   await apiClient.post('/auth/logout');
+};
+
+export const refreshUserSession = async (): Promise<boolean> => {
+  const response = await apiClient.post<SessionResponse>('/auth/refresh');
+
+  return response.data.success;
 };
 
 export const getQuizzes = async () => {

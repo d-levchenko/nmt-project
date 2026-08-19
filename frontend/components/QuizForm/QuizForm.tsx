@@ -8,7 +8,6 @@ import {
   Formik,
   useFormikContext,
 } from 'formik';
-import * as Yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createQuiz } from '@/lib/api';
@@ -20,64 +19,7 @@ import {
   QuizFormValues,
   toCreateQuizPayload,
 } from '@/types/quizFormTypes';
-
-const validationSchema = Yup.object({
-  title: Yup.string().trim().min(1).max(150).required('Title is required.'),
-  description: Yup.string().max(1000),
-  questions: Yup.array()
-    .of(
-      Yup.lazy((value: QuestionFormValues) => {
-        const common = {
-          type: Yup.string().required(),
-          questionText: Yup.string()
-            .trim()
-            .min(5, 'Question text should be at least 5 characters.')
-            .required('Question text is required.'),
-        };
-
-        if (value?.type === 'boolean') {
-          return Yup.object({
-            ...common,
-            type: Yup.mixed<'boolean'>().oneOf(['boolean']).required(),
-            correctAnswerBoolean: Yup.boolean().required(),
-          });
-        }
-
-        if (value?.type === 'input') {
-          return Yup.object({
-            ...common,
-            type: Yup.mixed<'input'>().oneOf(['input']).required(),
-            correctAnswerText: Yup.string()
-              .trim()
-              .required('Correct answer is required.'),
-          });
-        }
-
-        return Yup.object({
-          ...common,
-          type: Yup.mixed<'checkbox'>().oneOf(['checkbox']).required(),
-          options: Yup.array()
-            .of(Yup.string().trim().required('Option cannot be empty.'))
-            .min(2, 'Add at least two options.')
-            .required(),
-          correctAnswerCheckboxIndexes: Yup.array()
-            .of(Yup.number().integer().min(0))
-            .min(1, 'Select at least one correct option.')
-            .required(),
-        }).test(
-          'valid-indices',
-          'Invalid correct option.',
-          value =>
-            !!value &&
-            value.correctAnswerCheckboxIndexes.every(
-              index => index != null && index < value.options.length,
-            ),
-        );
-      }),
-    )
-    .min(1, 'Add at least one question.')
-    .required(),
-});
+import { quizValidationSchema } from '@/validation/quizValidationSchema';
 
 const TYPES: QuestionType[] = ['boolean', 'input', 'checkbox'];
 
@@ -255,7 +197,7 @@ export default function QuizForm() {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
+      validationSchema={quizValidationSchema}
       onSubmit={async (values, { setSubmitting }) => {
         setSubmitError('');
         try {

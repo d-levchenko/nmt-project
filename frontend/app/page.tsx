@@ -1,19 +1,20 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 
-export const metadata: Metadata = {
-  title: 'Quiz Builder',
-  description: 'Create and manage quizzes with ease',
+const HomePageContent = () => {
+  const router = useRouter();
 
-  openGraph: {
-    type: 'website',
-    title: 'Quiz Builder',
-    description: 'Create and manage quizzes with ease',
-    siteName: 'Quiz Builder',
-  },
-};
+  useEffect(() => {
+    const user = useAuthStore.getState().user;
+    if (user) {
+      router.push('/history');
+    }
+  }, [router]);
 
-const HomePage = () => {
   return (
     <section className="py-20 text-center">
       <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
@@ -38,6 +39,10 @@ const HomePage = () => {
       </div>
     </section>
   );
+};
+
+const HomePage = () => {
+  return <HomePageContent />;
 };
 
 export default HomePage;

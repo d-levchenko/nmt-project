@@ -1,24 +1,40 @@
 'use client';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { loginUser } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { getApiError } from '@/lib/error';
-
-const schema = Yup.object({
-  email: Yup.string()
-    .email('Enter a valid email.')
-    .required('Email is required.'),
-  password: Yup.string().required('Password is required.'),
-});
+import { loginSchema } from '@/validation/authValidation';
 
 const Login = () => {
   const router = useRouter();
   const params = useSearchParams();
-  const { setUser } = useAuthStore();
+  const { setUser, setInitialized } = useAuthStore();
+
+  const handleSubmitForm = async (
+    values: { email: string; password: string },
+    {
+      setSubmitting,
+      setStatus,
+    }: {
+      setSubmitting: (isSubmitting: boolean) => void;
+      setStatus: (status?: string) => void;
+    },
+  ) => {
+    try {
+      const user = await loginUser(values);
+      setUser(user);
+      setInitialized(true);
+      router.push(params.get('next') || '/quizzes');
+    } catch (error) {
+      setStatus(getApiError(error));
+      setInitialized(false);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <main className="mx-auto max-w-md px-4 py-12">
@@ -27,18 +43,8 @@ const Login = () => {
         <p className="mt-2 text-slate-500">Sign in to continue training.</p>
         <Formik
           initialValues={{ email: '', password: '' }}
-          validationSchema={schema}
-          onSubmit={async (values, { setSubmitting, setStatus }) => {
-            try {
-              const user = await loginUser(values);
-              setUser(user);
-              router.push(params.get('next') || '/quizzes');
-            } catch (error) {
-              setStatus(getApiError(error));
-            } finally {
-              setSubmitting(false);
-            }
-          }}>
+          validationSchema={loginSchema}
+          onSubmit={handleSubmitForm}>
           {({ status, isSubmitting }) => (
             <Form className="mt-7 space-y-4">
               <label className="block">

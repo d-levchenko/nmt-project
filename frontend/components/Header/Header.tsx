@@ -24,36 +24,47 @@ const Header = () => {
         <Link href="/" className="text-xl font-bold">
           Quiz Builder
         </Link>
+
         <div className="flex items-center gap-5 text-sm">
           <Link href="/quizzes" className="hover:underline">
             Quizzes
           </Link>
+
           {initialized && user && (
             <Link href="/history" className="hover:underline">
               History
             </Link>
           )}
-          {(user?.role === 'teacher' || user?.role === 'admin') && (
-            <Link
-              href="/create"
-              className="rounded-lg bg-slate-900 px-4 py-2 text-white">
-              + Create Quiz
-            </Link>
-          )}
-          {initialized && user ? (
+
+          {initialized &&
+            (user?.role === 'teacher' || user?.role === 'admin') && (
+              <Link
+                href="/create"
+                className="rounded-lg bg-slate-900 px-4 py-2 text-white">
+                + Create Quiz
+              </Link>
+            )}
+
+          {!initialized ? (
+            <span className="text-slate-400">...</span>
+          ) : user ? (
             <>
               <span className="hidden text-slate-500 sm:inline">
                 {user.username}
               </span>
+
               <button
+                type="button"
                 onClick={() => logout.mutate()}
-                className="hover:underline">
-                Logout
+                disabled={logout.isPending}
+                className="hover:underline disabled:opacity-50">
+                {logout.isPending ? 'Logging out...' : 'Logout'}
               </button>
             </>
           ) : (
             <>
               <Link href="/login">Login</Link>
+
               <Link href="/register" className="rounded-lg border px-4 py-2">
                 Register
               </Link>
