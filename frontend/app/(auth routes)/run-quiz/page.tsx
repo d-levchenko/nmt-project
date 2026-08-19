@@ -122,11 +122,15 @@ function Runner() {
 
   if (!quizId)
     return (
-      <main className="mx-auto max-w-3xl px-4 py-12">Select a quiz first.</main>
+      <main className="mx-auto max-w-3xl px-4 py-12">
+        Спочатку виберіть тест
+      </main>
     );
 
   if (isLoading || !quiz)
-    return <main className="mx-auto max-w-3xl px-4 py-12">Loading…</main>;
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-12">Завантаження...</main>
+    );
 
   if (result) return <Result result={result} />;
 
@@ -135,14 +139,14 @@ function Runner() {
       <main className="mx-auto max-w-3xl px-4 py-12">
         <div className="rounded-2xl border bg-white p-7 shadow-sm">
           <p className="text-sm uppercase tracking-wider text-slate-500">
-            Training mode
+            Режим тренування.
           </p>
           <h1 className="mt-2 text-4xl font-bold">{quiz.title}</h1>
           <p className="mt-3 text-slate-600">
-            Choose how many questions you want to answer.
+            Виберіть, на скільки запитань ви хочете відповісти.
           </p>
           <div className="mt-7 flex flex-wrap gap-2">
-            {[1, 5, 10, 15, quiz.questionCount]
+            {[1, 5, 10, 15, 20, quiz.questionCount]
               .filter(
                 (v, i, a) => v <= quiz.questionCount && a.indexOf(v) === i,
               )
@@ -156,7 +160,7 @@ function Runner() {
               ))}
           </div>
           <label className="mt-5 block text-sm">
-            Number of questions
+            Кількість запитань
             <input
               type="number"
               min={1}
@@ -178,16 +182,17 @@ function Runner() {
             onClick={() => start.mutate()}
             disabled={start.isPending}
             className="mt-6 rounded-lg bg-slate-900 px-5 py-3 font-medium text-white">
-            {start.isPending ? 'Starting…' : 'Start training'}
+            {start.isPending ? 'Завантаження...' : 'Почати тренування'}
           </button>
         </div>
       </main>
     );
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-5 flex items-center justify-between text-sm text-slate-500">
         <span>
-          Question {current + 1} of {attempt.questions.length}
+          Питання {current + 1} з {attempt.questions.length}
         </span>
         <span>{Math.round((current / attempt.questions.length) * 100)}%</span>
       </div>
@@ -202,7 +207,7 @@ function Runner() {
             value={currentDraft?.answerText ?? ''}
             onChange={e => setDraft({ answerText: e.target.value })}
             className="mt-7 w-full rounded-lg border px-4 py-3"
-            placeholder="Type your answer"
+            placeholder="Введіть вашу відповідь"
           />
         ) : (
           <div className="mt-7 space-y-3">
@@ -238,10 +243,10 @@ function Runner() {
           onClick={goNext}
           className="mt-7 rounded-lg bg-slate-900 px-5 py-3 font-medium text-white">
           {finish.isPending
-            ? 'Submitting…'
+            ? 'Завантаження...'
             : current === attempt.questions.length - 1
-              ? 'Finish quiz'
-              : 'Next question'}
+              ? 'Завершити тренування'
+              : 'Наступне питання'}
         </button>
       </div>
     </main>
@@ -255,7 +260,7 @@ function Result({ result }: { result: AttemptResult }) {
     <main className="mx-auto max-w-4xl px-4 py-10">
       <div className="rounded-2xl border bg-white p-7 shadow-sm">
         <p className="text-sm uppercase tracking-wider text-slate-500">
-          Quiz complete
+          Тест завершено
         </p>
         <h1 className="mt-2 text-4xl font-bold">{result.quizTitle}</h1>
         <div className="mt-7 grid gap-4 sm:grid-cols-3">
@@ -264,8 +269,8 @@ function Result({ result }: { result: AttemptResult }) {
             value={`${result.correctAnswers}/${result.totalQuestions} (${result.percentage}%)`}
             extra={
               result.scorePercentile === null
-                ? 'First attempt'
-                : `Better than ${result.scorePercentile}%`
+                ? 'Перша спроба'
+                : `Краще ніж ${result.scorePercentile}%`
             }
           />
           <Stat
@@ -273,8 +278,8 @@ function Result({ result }: { result: AttemptResult }) {
             value={`${result.averageAnswerTime}s`}
             extra={
               result.timePercentile === null
-                ? 'First attempt'
-                : `Faster than ${result.timePercentile}%`
+                ? 'Перша спроба'
+                : `Швидше ніж ${result.timePercentile}%`
             }
           />
           <Stat
@@ -286,7 +291,7 @@ function Result({ result }: { result: AttemptResult }) {
       </div>
 
       <section className="mt-8 space-y-4">
-        <h2 className="text-2xl font-bold">Answers</h2>
+        <h2 className="text-2xl font-bold">Відповіді</h2>
         {result.answers.map((a, i) => (
           <article
             key={a.questionId}
@@ -301,7 +306,7 @@ function Result({ result }: { result: AttemptResult }) {
               {a.correct ? 'Correct' : 'Incorrect'}
             </p>
             <p className="mt-2 text-sm">
-              Correct answer:{' '}
+              Правильна відповідь:{' '}
               <strong>
                 {a.type === 'input'
                   ? a.correctAnswerText
@@ -310,7 +315,7 @@ function Result({ result }: { result: AttemptResult }) {
             </p>
             {a.type !== 'input' && (
               <p className="mt-1 text-sm text-slate-600">
-                Selected:{' '}
+                Обрана відповідь:{' '}
                 {a.selectedAnswerTexts.length
                   ? a.selectedAnswerTexts.join(', ')
                   : 'No answer'}
@@ -322,7 +327,7 @@ function Result({ result }: { result: AttemptResult }) {
       <button
         onClick={() => router.push(`/quizzes/${result.quizId}`)}
         className="mt-7 rounded-lg border bg-white px-5 py-3">
-        Back to quiz
+        Повернутись до тестів
       </button>
     </main>
   );

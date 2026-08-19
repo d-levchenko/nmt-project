@@ -5,9 +5,9 @@ const Loader = () => {
     <main className={css.page}>
       <div className={css.spinner} />
 
-      <h1>Loading...</h1>
+      <h1>Завантаження...</h1>
 
-      <p>Please wait while we fetch your data.</p>
+      <p>Будь ласка, очікуйте, поки завантажиться сторінка.</p>
     </main>
   );
 };

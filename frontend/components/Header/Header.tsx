@@ -26,31 +26,31 @@ const Header = () => {
     <header className="border-b bg-white">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="text-xl font-bold">
-          Quiz Builder
+          Підготовка до НМТ
         </Link>
 
         <div className="flex items-center gap-5 text-sm">
           <Link href="/quizzes" className="hover:underline">
-            Quizzes
+            Тести
           </Link>
 
           {!initialized ? (
             <span
               className="text-slate-400"
               aria-label="Checking authentication">
-              Checking authentication…
+              Перевірка авторизації...
             </span>
           ) : user ? (
             <>
               <Link href="/history" className="hover:underline">
-                History
+                Історія
               </Link>
 
               {(user.role === 'teacher' || user.role === 'admin') && (
                 <Link
                   href="/create"
                   className="rounded-lg bg-slate-900 px-4 py-2 text-white">
-                  + Create Quiz
+                  + Створити тест
                 </Link>
               )}
 
@@ -63,16 +63,16 @@ const Header = () => {
                 onClick={() => logout.mutate()}
                 disabled={logout.isPending}
                 className="hover:underline disabled:opacity-50">
-                {logout.isPending ? 'Logging out…' : 'Logout'}
+                {logout.isPending ? 'Вихід...' : 'Вийти'}
               </button>
             </>
           ) : (
             <>
               <Link href="/login" className="hover:underline">
-                Login
+                Вхід
               </Link>
               <Link href="/register" className="rounded-lg border px-4 py-2">
-                Register
+                Реєстрація
               </Link>
             </>
           )}

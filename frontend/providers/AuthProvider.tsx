@@ -42,7 +42,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   if (!initialized) {
     return (
       <div className="flex min-h-screen items-center justify-center text-slate-500">
-        Checking authentication…
+        Перевірка авторизації...
       </div>
     );
   }

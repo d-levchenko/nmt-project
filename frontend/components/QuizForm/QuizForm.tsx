@@ -40,7 +40,7 @@ function QuestionEditor({
   return (
     <div className="space-y-4 rounded-xl border bg-slate-50 p-5">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="font-semibold">Question {index + 1}</h3>
+        <h3 className="font-semibold">Питання {index + 1}</h3>
         <select
           value={question.type}
           onChange={event => changeType(event.target.value as QuestionType)}
@@ -54,7 +54,7 @@ function QuestionEditor({
       </div>
 
       <label className="block text-sm font-medium">
-        Question
+        Питання
         <Field
           name={`${base}.questionText`}
           className="mt-1 w-full rounded-lg border bg-white px-3 py-2"
@@ -68,7 +68,7 @@ function QuestionEditor({
 
       {question.type === 'boolean' && (
         <div>
-          <p className="text-sm font-medium">Correct answer</p>
+          <p className="text-sm font-medium">Правильна відповідь</p>
           <div className="mt-2 flex gap-5">
             <label className="flex items-center gap-2">
               <input
@@ -78,7 +78,7 @@ function QuestionEditor({
                   setFieldValue(`${base}.correctAnswerBoolean`, true)
                 }
               />
-              True
+              Так
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -88,7 +88,7 @@ function QuestionEditor({
                   setFieldValue(`${base}.correctAnswerBoolean`, false)
                 }
               />
-              False
+              Ні
             </label>
           </div>
         </div>
@@ -96,7 +96,7 @@ function QuestionEditor({
 
       {question.type === 'input' && (
         <label className="block text-sm font-medium">
-          Correct answer
+          Правильна відповідь
           <Field
             name={`${base}.correctAnswerText`}
             className="mt-1 w-full rounded-lg border bg-white px-3 py-2"
@@ -113,7 +113,7 @@ function QuestionEditor({
         <FieldArray name={`${base}.options`}>
           {({ push, remove }) => (
             <div className="space-y-2">
-              <p className="text-sm font-medium">Options</p>
+              <p className="text-sm font-medium">Варіанти відповіді</p>
               {question.options.map((_, optionIndex) => (
                 <div key={optionIndex} className="flex items-center gap-2">
                   <Field
@@ -138,7 +138,7 @@ function QuestionEditor({
                         );
                       }}
                     />
-                    Correct
+                    Правильна
                   </label>
                   {question.options.length > 2 && (
                     <button
@@ -156,7 +156,7 @@ function QuestionEditor({
                         );
                       }}
                       className="text-sm text-red-600">
-                      Remove
+                      Видалити
                     </button>
                   )}
                 </div>
@@ -175,7 +175,7 @@ function QuestionEditor({
                 type="button"
                 onClick={() => push('')}
                 className="rounded-lg border bg-white px-3 py-2 text-sm">
-                + Add option
+                + Додати варіант
               </button>
             </div>
           )}
@@ -185,7 +185,7 @@ function QuestionEditor({
   );
 }
 
-export default function QuizForm() {
+const QuizForm = () => {
   const router = useRouter();
   const [submitError, setSubmitError] = useState('');
   const initialValues: QuizFormValues = {
@@ -212,10 +212,10 @@ export default function QuizForm() {
       {({ values, isSubmitting }) => (
         <Form className="space-y-6">
           <label className="block text-sm font-medium">
-            Quiz title
+            Назва тесту
             <Field
               name="title"
-              placeholder="e.g. JavaScript Basics"
+              placeholder="НМТ математика 2026"
               className="mt-1 w-full rounded-lg border bg-white px-3 py-3"
             />
             <ErrorMessage
@@ -226,7 +226,7 @@ export default function QuizForm() {
           </label>
 
           <label className="block text-sm font-medium">
-            Description
+            Опис тесту
             <Field
               as="textarea"
               name="description"
@@ -246,7 +246,7 @@ export default function QuizForm() {
                         type="button"
                         onClick={() => remove(index)}
                         className="mt-2 text-sm text-red-600">
-                        Remove question
+                        Видалити питання
                       </button>
                     )}
                   </div>
@@ -258,7 +258,7 @@ export default function QuizForm() {
                       key={type}
                       onClick={() => push(createEmptyQuestion(type))}
                       className="rounded-lg border bg-white px-3 py-2 text-sm">
-                      + {type} question
+                      + {type} питання
                     </button>
                   ))}
                 </div>
@@ -276,10 +276,12 @@ export default function QuizForm() {
             type="submit"
             disabled={isSubmitting}
             className="rounded-lg bg-slate-900 px-5 py-3 font-medium text-white">
-            {isSubmitting ? 'Creating…' : 'Create quiz'}
+            {isSubmitting ? 'Створення...' : 'Створити тест'}
           </button>
         </Form>
       )}
     </Formik>
   );
-}
+};
+
+export default QuizForm;

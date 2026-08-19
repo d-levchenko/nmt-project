@@ -15,22 +15,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Quiz Builder App',
-  description: 'Build and share quizzes with others',
+  title: 'Підготовка до НМТ, тестування та тренування',
+  description:
+    'Тренуйтеся в підготовці до НМТ. Підготуємо вас до екзамену. Підготовка до НМТ, тестування та тренування.',
 
   openGraph: {
     images: '/og.png',
     type: 'website',
-    title: 'Quiz Builder App',
-    description: 'Build and share quizzes with others',
-    siteName: 'Quiz Builder App',
+    title: 'Підготовка до НМТ, тестування та тренування',
+    description:
+      'Тренуйтеся в підготовці до НМТ. Підготуємо вас до екзамену. Підготовка до НМТ, тестування та тренування.',
+    siteName: 'Підготовка до НМТ',
     url: 'https://quiz-builder-app.vercel.app',
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'Quiz Builder App',
-    description: 'Build and share quizzes with others',
+    title: 'Підготовка до НМТ, тестування та тренування',
+    description:
+      'Тренуйтеся в підготовці до НМТ. Підготуємо вас до екзамену. Підготовка до НМТ, тестування та тренування.',
     images: '/og.png',
   },
 };

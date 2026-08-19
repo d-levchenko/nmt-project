@@ -15,9 +15,9 @@ const Register = () => {
   return (
     <main className="mx-auto max-w-md px-4 py-12">
       <div className="rounded-2xl border bg-white p-7 shadow-sm">
-        <h1 className="text-3xl font-bold">Create account</h1>
+        <h1 className="text-3xl font-bold">Створити аккаунт</h1>
         <p className="mt-2 text-slate-500">
-          Start training and track your progress.
+          Почніть тренування та відстежуйте свій прогрес.
         </p>
         <Formik
           initialValues={{ username: '', email: '', password: '' }}
@@ -37,7 +37,7 @@ const Register = () => {
           {({ status, isSubmitting }) => (
             <Form className="mt-7 space-y-4">
               <label className="block">
-                Username
+                Ім&apos;я користувача ( username )
                 <Field
                   name="username"
                   className="mt-1 w-full rounded-lg border px-3 py-2"
@@ -54,6 +54,7 @@ const Register = () => {
                   name="email"
                   type="email"
                   className="mt-1 w-full rounded-lg border px-3 py-2"
+                  placeholder="4c3B9@example.com"
                 />
                 <ErrorMessage
                   name="email"
@@ -62,7 +63,7 @@ const Register = () => {
                 />
               </label>
               <label className="block">
-                Password
+                Пароль
                 <Field
                   name="password"
                   type="password"
@@ -79,15 +80,15 @@ const Register = () => {
                 disabled={isSubmitting}
                 type="submit"
                 className="w-full rounded-lg bg-slate-900 px-4 py-3 font-medium text-white">
-                {isSubmitting ? 'Creating…' : 'Create account'}
+                {isSubmitting ? 'Реєстрація...' : 'Створити аккаунт'}
               </button>
             </Form>
           )}
         </Formik>
         <p className="mt-5 text-center text-sm text-slate-500">
-          Already registered?{' '}
+          Вже маєте аккаунт?{' '}
           <Link href="/login" className="font-medium text-slate-900 underline">
-            Sign in
+            Увійти
           </Link>
         </p>
       </div>

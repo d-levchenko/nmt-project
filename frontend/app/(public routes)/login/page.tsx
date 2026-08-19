@@ -38,8 +38,10 @@ const Login = () => {
   return (
     <main className="mx-auto max-w-md px-4 py-12">
       <div className="rounded-2xl border bg-white p-7 shadow-sm">
-        <h1 className="text-3xl font-bold">Welcome back</h1>
-        <p className="mt-2 text-slate-500">Sign in to continue training.</p>
+        <h1 className="text-3xl font-bold">Вітаємо</h1>
+        <p className="mt-2 text-slate-500">
+          Авторизуйтесь, щоб продовжити тренування
+        </p>
         <Formik
           initialValues={{ email: '', password: '' }}
           validationSchema={loginSchema}
@@ -60,7 +62,7 @@ const Login = () => {
                 />
               </label>
               <label className="block">
-                Password
+                Пароль
                 <Field
                   name="password"
                   type="password"
@@ -77,17 +79,17 @@ const Login = () => {
                 disabled={isSubmitting}
                 type="submit"
                 className="w-full rounded-lg bg-slate-900 px-4 py-3 font-medium text-white">
-                {isSubmitting ? 'Signing in…' : 'Sign in'}
+                {isSubmitting ? 'Авторизація...' : 'Вхід'}
               </button>
             </Form>
           )}
         </Formik>
         <p className="mt-5 text-center text-sm text-slate-500">
-          No account?{' '}
+          Немає аккаунту?{' '}
           <Link
             href="/register"
             className="font-medium text-slate-900 underline">
-            Register
+            Реєстрація
           </Link>
         </p>
       </div>

@@ -16,12 +16,16 @@ const QuizDetailsPage = () => {
   });
 
   if (isLoading)
-    return <main className="mx-auto max-w-4xl px-4 py-10">Loading quiz…</main>;
+    return (
+      <main className="mx-auto max-w-4xl px-4 py-10">
+        Завантаження тестів...
+      </main>
+    );
 
   if (error || !data)
     return (
       <main className="mx-auto max-w-4xl px-4 py-10">
-        <p className="text-red-600">Quiz not found.</p>
+        <p className="text-red-600">Тестів не знайдено.</p>
       </main>
     );
 
@@ -36,17 +40,17 @@ const QuizDetailsPage = () => {
         <p className="mt-3 text-slate-600">{data.description}</p>
         <div className="mt-5 flex items-center justify-between">
           <span className="text-sm text-slate-500">
-            {data.questionCount} questions
+            {data.questionCount} питань
           </span>
           <Link
             href={runHref}
             className="rounded-lg bg-slate-900 px-5 py-3 font-medium text-white">
-            Train this quiz
+            Тренуватись
           </Link>
         </div>
       </div>
       <section className="mt-8 space-y-4">
-        <h2 className="text-2xl font-bold">Questions</h2>
+        <h2 className="text-2xl font-bold">Питання</h2>
         {data.questions.map((q, i) => (
           <article key={q.id} className="rounded-xl border bg-white p-5">
             <p className="font-medium">
@@ -55,13 +59,13 @@ const QuizDetailsPage = () => {
             <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
               {q.type}
             </p>
-            {q.answers.length > 0 && (
+            {/* {q.answers.length > 0 && (
               <ul className="mt-3 space-y-1 text-sm text-slate-600">
                 {q.answers.map(a => (
                   <li key={a.id}>• {a.text}</li>
                 ))}
               </ul>
-            )}
+            )} */}
           </article>
         ))}
       </section>

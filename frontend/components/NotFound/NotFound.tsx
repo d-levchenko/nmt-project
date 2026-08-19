@@ -7,14 +7,12 @@ const NotFound = () => {
     <main className={css.page}>
       <h1>404</h1>
 
-      <h2>Page not found</h2>
+      <h2>Сторінка не знайдена</h2>
 
-      <p>
-        The page you&apos;re looking for doesn&apos;t exist or has been removed.
-      </p>
+      <p>Сторінка, яку ви шукаєте, не існує, або вона була видалена.</p>
 
       <Link href="/" className={css.button}>
-        Go Home
+        На головну
       </Link>
     </main>
   );

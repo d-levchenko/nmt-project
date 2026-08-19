@@ -20,7 +20,7 @@ const Protected = ({
   if (!initialized || !user || (roles && !roles.includes(user.role)))
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        Checking access…
+        Перевірка доступу...
       </div>
     );
 
