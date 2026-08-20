@@ -30,7 +30,7 @@ const Quizzes = () => {
               {quiz.description || 'No description.'}
             </p>
             <p className="mt-4 text-sm text-slate-500">
-              В базі {quiz.questionCount} питань
+              В базі {quiz.questionCount} різних завдань
             </p>
             <Link
               href={`/quizzes/${quiz.id}`}
